@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { FiEdit3, FiTrash } from 'react-icons/fi';
+import api from '../../services/api';
 
 import { Container } from './styles';
 
@@ -26,12 +27,17 @@ const Food: React.FC<IProps> = ({
 }: IProps) => {
   const [isAvailable, setIsAvailable] = useState(food.available);
 
-  async function toggleAvailable(): Promise<void> {
-    // TODO UPDATE STATUS (available)
+  async function toggleAvailable(id: number): Promise<void> {
+    await api.put(`/foods/${id}`, {
+      ...food,
+      available: !isAvailable,
+    });
+
+    setIsAvailable(!isAvailable);
   }
 
   function setEditingFood(): void {
-    // TODO - SET THE ID OF THE CURRENT ITEM TO THE EDITING FOOD AND OPEN MODAL
+    handleEditFood(food);
   }
 
   return (
@@ -75,7 +81,7 @@ const Food: React.FC<IProps> = ({
               id={`available-switch-${food.id}`}
               type="checkbox"
               checked={isAvailable}
-              onChange={toggleAvailable}
+              onChange={() => toggleAvailable(food.id)}
               data-testid={`change-status-food-${food.id}`}
             />
             <span className="slider" />
